@@ -114,23 +114,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--neon); backgrou
 .btn:disabled { cursor: progress; color: var(--ink); transform: none; }
 .send.done .btn { background: var(--ink); color: var(--ribbon); outline-color: rgba(233, 213, 255, .45); }
 .xp { display: none; flex: none; width: 26px; height: 34px; overflow: visible; }
-.send.sending .xp { display: block; will-change: transform; animation: xpflip 2s infinite; }
-.xp-top { will-change: transform; animation: xptop 2s linear infinite; }
-.xp-bot { will-change: transform; animation: xpbot 2s linear infinite; }
-.xp-flow { transform-origin: 0 16px; animation: xpflow 2s linear infinite, xpgrain .22s linear infinite; }
-/* ciclo: areia cai de 0 a 74% (superfície de cima afunda em V, embaixo cresce um monte), vira de 76% a 100% */
-@keyframes xpflip { 0%, 76% { transform: rotate(0); animation-timing-function: cubic-bezier(.65, 0, .35, 1); } 100% { transform: rotate(180deg); } }
-@keyframes xptop { 0% { transform: translateY(0); } 74%, 100% { transform: translateY(14px); } }
-@keyframes xpbot { 0% { transform: translateY(30px); } 74%, 100% { transform: translateY(10px); } }
-@keyframes xpflow {
-  0% { opacity: 0; transform: scaleY(1); }
-  3%, 4% { opacity: 1; transform: scaleY(1); }
-  44% { opacity: 1; transform: scaleY(.15); }
-  70% { opacity: 1; transform: scaleY(.15); }
-  74%, 100% { opacity: 0; transform: scaleY(.15); }
-}
-@keyframes xpgrain { to { stroke-dashoffset: -3; } }
-@media (prefers-reduced-motion: reduce) { .send.sending .xp { animation-duration: 4s; } }
+.send.sending .xp { display: block; }
 .error { color: #f87171; font-size: .9rem; min-height: 1.3em; margin: -.9rem 0 .8rem; }
 
 /* ---------- Mural ---------- */
@@ -542,7 +526,27 @@ function updateCounter() {
 }
 textEl.addEventListener("input", updateCounter);
 
-/* Espera: ampulheta estilo Windows XP (SVG + CSS) enquanto o recado é salvo */
+/* Espera: ampulheta estilo Windows XP (SVG animado por JS, igual em qualquer navegador) */
+const XP = { svg: $(".xp"), top: $(".xp-top"), bot: $(".xp-bot"), flow: $(".xp-flow"), raf: 0, t0: 0 };
+const XP_MS = matchMedia("(prefers-reduced-motion: reduce)").matches ? 4000 : 2000;   // 1 ciclo: areia cai (0–74%) e vira (76–100%)
+const xpClamp = (v, a, b) => Math.min(b, Math.max(a, v));
+function xpDraw(now) {
+  const t = ((now - XP.t0) % XP_MS) / XP_MS;
+  const p = xpClamp(t / 0.74, 0, 1);                       // progresso da areia
+  const topY = 14 * p, botY = 30 - 20 * p;                 // superfície de cima afunda, monte de baixo sobe
+  XP.top.setAttribute("transform", `translate(0 ${topY.toFixed(2)})`);
+  XP.bot.setAttribute("transform", `translate(0 ${botY.toFixed(2)})`);
+  const op = t < 0.03 ? t / 0.03 : t > 0.70 ? xpClamp((0.74 - t) / 0.04, 0, 1) : 1;
+  XP.flow.setAttribute("y2", xpClamp(botY, 18, 29).toFixed(2));   // fio termina na ponta do monte
+  XP.flow.setAttribute("opacity", op.toFixed(2));
+  XP.flow.setAttribute("stroke-dashoffset", (-((now / 220) % 1) * 3).toFixed(2));   // grãos caindo
+  let ang = 0;
+  if (t > 0.76) { const u = (t - 0.76) / 0.24; ang = 180 * (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2); }
+  XP.svg.style.transform = `rotate(${ang.toFixed(2)}deg)`;
+}
+function xpLoop(now) { xpDraw(now); XP.raf = requestAnimationFrame(xpLoop); }
+function xpStart() { cancelAnimationFrame(XP.raf); XP.t0 = performance.now(); XP.raf = requestAnimationFrame(xpLoop); }
+function xpStop() { cancelAnimationFrame(XP.raf); XP.svg.style.transform = ""; }
 function setLabel(txt) { label.textContent = txt; }
 
 /* ---- Limite anti-spam (por navegador) ----
@@ -591,10 +595,11 @@ async function send() {
   };
 
   busy = true; btn.disabled = true;
-  sendEl.classList.add("sending"); setLabel("Selando…");   // a ampulheta começa ao apertar
+  sendEl.classList.add("sending"); xpStart(); setLabel("Selando…");   // a ampulheta começa ao apertar
   let ok = false;
   try {
-    const [saved] = await Promise.all([Store.add(entry), wait(2000)]);   // 2 s = um ciclo completo da ampulheta
+    const [saved] = await Promise.all([Store.add(entry).catch((e) => ({ __err: e })), wait(2000)]);
+    if (saved && saved.__err) throw saved.__err;   // 2 s = um ciclo completo da ampulheta
     setLabel("Selado na cápsula");
     toast("Sua marca foi selada na cápsula");
     $("#name").value = ""; textEl.value = ""; updateCounter();
@@ -606,7 +611,7 @@ async function send() {
     err.textContent = "Não deu para salvar agora. Tente de novo em instantes.";
     setLabel("Selar na Cápsula");
   }
-  sendEl.classList.remove("sending");
+  sendEl.classList.remove("sending"); xpStop();
   if (ok) { sendEl.classList.add("done"); $("#mural").scrollIntoView({ behavior: "smooth" }); }
   await wait(1300);
   sendEl.classList.remove("done");

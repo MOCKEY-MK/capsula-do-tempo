@@ -181,7 +181,57 @@ aside h1 { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-c
 .react.pop svg { animation: pop .32s cubic-bezier(.2, 1.6, .4, 1); }
 @keyframes pop { from { transform: scale(.7); } to { transform: scale(1); } }
 
+/* ---------- Efeitos visuais do texto ---------- */
+.fxopts { display: flex; flex-wrap: wrap; gap: .5rem; }
+.fxopt { display: block; }
+.fxopt input { position: absolute; opacity: 0; pointer-events: none; }
+.fxopt span { display: flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 1rem; border-radius: 8px; cursor: pointer; white-space: nowrap;
+  border: 1px solid var(--line); background: #0e0e11; font-weight: 600; transition: border-color .15s, background .15s; user-select: none; }
+.fxopt span:hover { border-color: #5b5b6a; }
+.fxopt input:checked + span { border-color: var(--lilac); background: rgba(216, 180, 254, .12); }
+.fxopt input:focus-visible + span { outline: 2px solid var(--lilac); outline-offset: 2px; }
+.fxopt i { font-style: normal; }
+.pv-neon { color: #fff; text-shadow: 0 0 4px #fff, 0 0 10px #a855f7, 0 0 18px #a855f7; }
+.pv-glitch { color: #fff; text-shadow: -1.5px 0 #22d3ee, 1.5px 0 #f43f5e; }
+.pv-holo { background: linear-gradient(100deg, #a855f7, #ec4899, #f97316); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.pv-hacker { font-family: ui-monospace, "SF Mono", Menlo, Consolas, "Courier New", monospace; color: #b4ff39; }
+.fx-preview { margin-top: .8rem; background: #0e0e11; border: 1px solid var(--line); border-radius: 8px; padding: .9rem 1rem; }
+.fx-preview small { display: block; color: var(--muted); font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; margin-bottom: .5rem; }
+.fx-preview p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* efeitos aplicados aos recados do mural (e à prévia) */
+.fx-neon { color: #fff; font-weight: 600;
+  text-shadow: 0 0 2px #fff, 0 0 8px #d8b4fe, 0 0 18px #a855f7, 0 0 34px #a855f7, 0 0 56px #c026d3; }
+
+.fx-holografico { font-weight: 700; color: transparent; -webkit-text-fill-color: transparent;
+  width: fit-content; max-width: 100%;
+  background: linear-gradient(100deg, #a855f7 0%, #ec4899 25%, #f97316 50%, #ec4899 75%, #a855f7 100%) 0 0 / 200% 100%;
+  -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 0 8px rgba(236, 72, 153, .35));
+  animation: holo 5s linear infinite; }
+@keyframes holo { to { background-position: 200% 0; } }
+
+.fx-hacker { font-family: ui-monospace, "SF Mono", Menlo, Consolas, "Courier New", monospace; font-size: .95em; color: #b4ff39;
+  text-shadow: 0 0 6px rgba(180, 255, 57, .45); }
+.fx-hacker::before { content: "> "; opacity: .7; }
+.fx-hacker::after { content: "\2588"; margin-left: 2px; animation: cursor 1s steps(1) infinite; }
+@keyframes cursor { 50% { opacity: 0; } }
+
+/* glitch estilo TikTok: separação RGB + faixas que tremem em rajadas curtas */
+.fx-glitch { position: relative; color: #fff; font-weight: 600; text-shadow: -1.5px 0 rgba(34, 211, 238, .8), 1.5px 0 rgba(244, 63, 94, .8);
+  animation: gl-main 2.6s steps(1) infinite; }
+.fx-glitch::before, .fx-glitch::after { content: attr(data-text); position: absolute; inset: 0; padding: inherit; pointer-events: none;
+  clip-path: inset(0 0 100% 0); mix-blend-mode: screen; text-shadow: none; }
+.fx-glitch::before { color: #22d3ee; animation: gl-a 1.7s steps(1) infinite; }
+.fx-glitch::after { color: #f43f5e; animation: gl-b 2.1s steps(1) infinite; }
+@keyframes gl-a { 0%, 100% { clip-path: inset(0 0 100% 0); } 6% { clip-path: inset(8% 0 62% 0); transform: translate(-4px, 0); } 10% { clip-path: inset(58% 0 12% 0); transform: translate(3px, 0); }
+  14% { clip-path: inset(0 0 100% 0); transform: none; } 58% { clip-path: inset(30% 0 40% 0); transform: translate(-3px, 1px); } 62% { clip-path: inset(0 0 100% 0); transform: none; } }
+@keyframes gl-b { 0%, 100% { clip-path: inset(0 0 100% 0); } 20% { clip-path: inset(40% 0 30% 0); transform: translate(4px, 0); } 24% { clip-path: inset(70% 0 5% 0); transform: translate(-3px, 0); }
+  28% { clip-path: inset(0 0 100% 0); transform: none; } 75% { clip-path: inset(12% 0 55% 0); transform: translate(3px, -1px); } 79% { clip-path: inset(0 0 100% 0); transform: none; } }
+@keyframes gl-main { 0%, 88%, 100% { transform: none; } 90% { transform: translate(1px, -1px) skewX(-3deg); } 93% { transform: translate(-1px, 1px) skewX(2deg); } 96% { transform: none; } }
+
 /* ---------- Player lo-fi ---------- */
+.player.waiting .pp { animation: ppwait 1.8s ease-out infinite; }
+@keyframes ppwait { 0% { box-shadow: 0 0 0 0 rgba(216, 180, 254, .6); } 100% { box-shadow: 0 0 0 14px rgba(216, 180, 254, 0); } }
 .player { position: fixed; right: max(.9rem, env(safe-area-inset-right, 0px)); bottom: max(.9rem, env(safe-area-inset-bottom, 0px)); z-index: 9;
   display: flex; align-items: center; gap: .7rem; padding: .42rem .95rem .42rem .42rem; border-radius: 999px;
   background: rgba(26, 26, 31, .86); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
@@ -267,6 +317,17 @@ html.kb .player { opacity: 0; transform: translateY(160%); pointer-events: none;
               <span class="counter" id="counter" aria-live="polite">0 / 280</span>
             </div>
             <div class="meter" aria-hidden="true"><i id="meter"></i></div>
+          </div>
+          <div class="field" id="field-style" hidden>
+            <div class="ribbon" id="lbl-fx">Efeito do texto</div>
+            <div class="fxopts" role="radiogroup" aria-labelledby="lbl-fx">
+              <label class="fxopt"><input type="radio" name="estilo" value="normal" checked><span>Normal</span></label>
+              <label class="fxopt"><input type="radio" name="estilo" value="neon"><span><i class="pv-neon">Neon</i></span></label>
+              <label class="fxopt"><input type="radio" name="estilo" value="glitch"><span><i class="pv-glitch">Glitch</i></span></label>
+              <label class="fxopt"><input type="radio" name="estilo" value="holografico"><span><i class="pv-holo">Holográfico</i></span></label>
+              <label class="fxopt"><input type="radio" name="estilo" value="hacker"><span><i class="pv-hacker">Hacker</i></span></label>
+            </div>
+            <div class="fx-preview"><small>Prévia</small><p id="fx-p"></p></div>
           </div>
           <p class="error" id="error" role="alert"></p>
           <div class="send" id="send">
@@ -406,6 +467,17 @@ html.kb .player { opacity: 0; transform: translateY(160%); pointer-events: none;
    revoke all on function public.reagir(text, text, integer) from public;
    grant execute on function public.reagir(text, text, integer) to anon;
 
+   >>> SQL DOS EFEITOS VISUAIS (rode uma vez; sem ele o site funciona normal, só sem o seletor de efeito) <<<
+
+   alter table public.recados add column if not exists estilo text not null default 'normal';
+
+   drop policy if exists "enviar recados" on public.recados;
+   create policy "enviar recados" on public.recados for insert to anon
+     with check (char_length(mensagem) between 1 and 280
+       and char_length(coalesce(nome, '')) <= 40
+       and origem in ('Instagram','TikTok','Discord','Vida real','Outro')
+       and estilo in ('normal','neon','glitch','holografico','hacker'));
+
    Para trocar a senha, mude 'admin123' nas duas funções acima (e rode de novo).
    ========================================================= */
 const SUPABASE_URL = "https://utpddwluywrxyrpfuplc.supabase.co";
@@ -424,9 +496,11 @@ async function rest(path, opts = {}) {
   if (!res.ok) throw new Error((json && (json.message || json.hint)) || `HTTP ${res.status}`);
   return json;
 }
-const toEntry = (r) => ({ id: r.id, name: r.nome || "", source: r.origem || "Outro", text: r.mensagem, createdAt: r.created_at,
+const toEntry = (r) => ({ id: r.id, name: r.nome || "", source: r.origem || "Outro", text: r.mensagem, createdAt: r.created_at, style: r.estilo || "normal",
   react: { curtidas: r.curtidas || 0, triste: r.triste || 0, alegre: r.alegre || 0, fogo: r.fogo || 0 } });
 const COLS = "id,created_at,nome,origem,mensagem";
+const VALID_STYLES = ["normal", "neon", "glitch", "holografico", "hacker"];
+let stylesOn = true;       // vira false se a coluna "estilo" ainda não existe no banco
 const REACT_SETS = [["curtidas", "fogo", "triste", "alegre"], ["curtidas", "fogo"]];   // do mais completo ao antigo
 let reactTypes = [];   // reações que existem no banco (vazio = SQL das reações ainda não rodou)
 
@@ -439,11 +513,19 @@ const Store = {
       if (error) throw error;
       return data;
     };
-    let rows = null;
-    for (const set of REACT_SETS) {
-      try { rows = await query(`${COLS},${set.join(",")}`); reactTypes = set; break; } catch (e) {}   // tenta com as colunas novas; se faltar, cai para as antigas
+    /* tenta com todas as colunas novas (reações + estilo); se alguma ainda não existir no banco, tenta sem ela */
+    let rows = null, lastErr;
+    outer: for (const set of [...REACT_SETS, []]) {
+      for (const s of [true, false]) {
+        const cols = COLS + (set.length ? "," + set.join(",") : "") + (s ? ",estilo" : "");
+        try { rows = await query(cols); reactTypes = set; stylesOn = s; break outer; }
+        catch (e) {
+          lastErr = e;
+          if (!/column|does not exist|schema cache|42703|PGRST204/i.test(String((e && (e.message || e.code)) || e))) throw e;   // rede etc.: não adianta insistir
+        }
+      }
     }
-    if (!rows) { rows = await query(COLS); reactTypes = []; }
+    if (!rows) throw lastErr;
     return rows.map(toEntry);
   },
   /* Quantos recados existem de verdade (o mural lista só os 300 mais recentes, a contagem não tem limite) */
@@ -470,6 +552,7 @@ const Store = {
   /* Salva um recado novo */
   async add(entry) {
     const row = { nome: entry.name, origem: entry.source, mensagem: entry.text };
+    if (stylesOn) row.estilo = VALID_STYLES.includes(entry.style) ? entry.style : "normal";
     if (!db) {
       const out = await rest(TABLE, { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify(row) });
       return { ...entry, id: out && out[0] ? out[0].id : entry.id };
@@ -586,10 +669,17 @@ function buildReactions(m) {
   return wrap;
 }
 
+/* aplica o efeito escolhido ao texto (a classe só vem de uma lista fixa, nunca direto do banco) */
+function applyFx(p, style, text) {
+  const s = VALID_STYLES.includes(style) ? style : "normal";
+  p.className = s === "normal" ? "" : `fx-${s}`;
+  if (s === "glitch") p.setAttribute("data-text", text); else p.removeAttribute("data-text");
+}
+
 function buildCard(m, fresh) {
   const card = document.createElement("article");
   card.className = `note t-${m.source.replace(/\s+/g, "-")}${fresh ? " fresh" : ""}`;
-  const p = document.createElement("p"); p.textContent = m.text;
+  const p = document.createElement("p"); p.textContent = m.text; applyFx(p, m.style, m.text);
   const foot = document.createElement("footer");
   const who = document.createElement("span");
   const anon = !m.name || !m.name.trim();
@@ -609,6 +699,7 @@ async function renderMural(freshId) {
   try { items = await Store.list(); }
   catch (e) { console.error(e); showWallMsg("Não deu para carregar o mural agora. Detalhe técnico: " + ((e && (e.message || e.details)) || String(e))); return; }
   refreshCount(items.length);
+  $("#field-style").hidden = !stylesOn;     // sem a coluna "estilo" no banco, esconde o seletor
   if (!items.length) { showWallMsg("Ainda não tem nenhum recado. Seja o primeiro a deixar sua marca."); return; }
   wall.replaceChildren(...items.map((m) => buildCard(m, m.id === freshId)));
 }
@@ -624,7 +715,16 @@ function updateCounter() {
   counterEl.textContent = `${n} / ${MAX}`;
   counterEl.className = "counter" + (n >= MAX ? " max" : n >= MAX - 30 ? " warn" : "");
   $("#meter").style.width = Math.min(100, (n / MAX) * 100) + "%";
+  updatePreview();
 }
+/* prévia ao vivo do efeito escolhido */
+function updatePreview() {
+  const p = $("#fx-p"), t = textEl.value.trim();
+  const sel = document.querySelector('input[name="estilo"]:checked');
+  p.textContent = t || "Seu recado vai aparecer assim.";
+  applyFx(p, sel ? sel.value : "normal", p.textContent);
+}
+document.querySelectorAll('input[name="estilo"]').forEach((r) => r.addEventListener("change", updatePreview));
 textEl.addEventListener("input", updateCounter);
 
 /* Espera: ampulheta estilo Windows XP (SVG animado por JS, igual em qualquer navegador) */
@@ -691,6 +791,7 @@ async function send() {
     id: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()),
     name: $("#name").value.trim().slice(0, 40),
     source: document.querySelector('input[name="source"]:checked').value,
+    style: (document.querySelector('input[name="estilo"]:checked') || {}).value || "normal",
     text: text.slice(0, MAX),
     createdAt: new Date().toISOString()
   };
@@ -957,6 +1058,7 @@ const Lofi = (() => {
     if (ctx) return true;
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return false;
+    try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}   // iPhone: ignora o modo silencioso
     ctx = new AC({ latencyHint: "playback" });
     userGain = ctx.createGain(); userGain.gain.value = 0; userGain.connect(ctx.destination);
     engine = makeLofiEngine(ctx, userGain);
@@ -982,7 +1084,17 @@ const Lofi = (() => {
     fadeTimer = setTimeout(() => { if (!playing) ctx.suspend(); }, 500);   // suspende o áudio: não gasta bateria parado
   }
   function setVolume(vol) { if (ctx && playing) userGain.gain.setTargetAtTime(curve(vol), ctx.currentTime, 0.05); }
-  return { play, pause, setVolume, get playing() { return playing; } };
+  /* Tenta tocar sozinho ao abrir. Só funciona se o navegador permitir som automático; senão devolve false. */
+  async function tryAutoplay(vol) {
+    if (!ensure()) return false;
+    await Promise.race([ctx.resume().catch(() => {}), new Promise((r) => setTimeout(r, 400))]);
+    if (ctx.state !== "running") return false;
+    await play(vol);
+    return true;
+  }
+  /* Ao voltar para a aba (ou após ligação no celular) o sistema pode ter pausado o áudio: retoma */
+  function nudge() { if (ctx && playing && ctx.state !== "running") ctx.resume().catch(() => {}); }
+  return { play, pause, setVolume, tryAutoplay, nudge, get playing() { return playing; }, get running() { return playing && !!ctx && ctx.state === "running"; } };
 })();
 
 const VOL_KEY = "capsula-lofi:v1";
@@ -1000,12 +1112,41 @@ pl.vol.addEventListener("input", () => {
   paintVol(); Lofi.setVolume(+pl.vol.value);
   try { localStorage.setItem(VOL_KEY, pl.vol.value); } catch (e) {}
 });
+/* ---- Início automático ----
+   Navegadores bloqueiam som sem interação (regra de todos eles). Então: tenta tocar ao abrir; se for
+   bloqueado, o primeiro toque/clique/tecla em qualquer lugar da página liga a música. Quem pausar
+   no player não é incomodado de novo nas próximas visitas. */
+const PAUSE_KEY = "capsula-lofi-pausou:v1";
+const wasPaused = () => { try { return localStorage.getItem(PAUSE_KEY) === "1"; } catch (e) { return false; } };
+const setPaused = (v) => { try { v ? localStorage.setItem(PAUSE_KEY, "1") : localStorage.removeItem(PAUSE_KEY); } catch (e) {} };
+const GESTURES = ["pointerup", "click", "touchend", "keydown"];
+
+async function onFirstGesture(e) {
+  if (Lofi.running || pl.box.contains(e.target)) return;      // o botão do player cuida do próprio clique
+  try { await Lofi.play(+pl.vol.value); if (Lofi.running) { paintPlayer(true); disarm(); } }
+  catch (err) { /* continua esperando o próximo toque */ }
+}
+function disarm() { GESTURES.forEach((g) => document.removeEventListener(g, onFirstGesture, true)); pl.box.classList.remove("waiting"); }
+function armFirstGesture() {
+  GESTURES.forEach((g) => document.addEventListener(g, onFirstGesture, true));
+  pl.box.classList.add("waiting"); pl.sub.textContent = "toque na tela para ouvir";
+}
+
 pl.btn.addEventListener("click", async () => {
+  disarm();
   try {
-    if (Lofi.playing) { Lofi.pause(); paintPlayer(false); }
-    else { await Lofi.play(+pl.vol.value); paintPlayer(true); }
+    if (Lofi.running) { Lofi.pause(); paintPlayer(false); setPaused(true); }
+    else { await Lofi.play(+pl.vol.value); paintPlayer(Lofi.running); setPaused(false); }
   } catch (e) { console.error(e); paintPlayer(false); toast("Seu navegador não conseguiu tocar o áudio"); }
 });
+document.addEventListener("visibilitychange", () => { if (!document.hidden) Lofi.nudge(); });
+
+(async () => {
+  if (wasPaused()) return;
+  let ok = false;
+  try { ok = await Lofi.tryAutoplay(+pl.vol.value); } catch (e) { console.error(e); }
+  if (ok) paintPlayer(true); else armFirstGesture();
+})();
 
 updateCounter();
 showWallMsg("Carregando recados…");
